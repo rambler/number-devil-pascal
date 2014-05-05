@@ -1,13 +1,76 @@
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>D3 Page Template</title>
-        <script type="text/javascript" src="d3/d3.v3.js"></script>
+        <title>D3: ND first steps</title>
+        <script type="text/javascript" src="d3/d3.js"></script>
+        <style type="text/css">
+            /* No style rules here yet */       
+        </style>
     </head>
     <body>
+<!--
+   1
+  1 1
+ 1 2 1
+1 3 3 1
+
+how many rows: ___ show divisible by: ___
+
+
+[ { row: 1, col: 1, val: 1, x: 245, y: 0, divisibleByTwo: false },
+  { row: 2, col: 1, val: 1, x: 230, y: 20, divisibleByTwo: false },
+  { row: 2, col: 2, val: 1, x: 260, y: 20, divisibleByTwo: true },
+  { row: 3, col: 1, val: 1,  }..
+]
+-->
         <script type="text/javascript">
-            // Your beautiful D3 code will go here
+            //Width and height
+            var w = 500;
+            var h = 500;
+
+            var numRows = 20;
+            var cellSize = h/numRows;
+            
+            var dataset = [[1], [1,1]];
+            for(var i = 2; i < numRows; i++) {
+                dataset.push([]);
+                dataset[i].push(1);
+                for(var j = 0; j < (i-1); j++) {
+                    var dp = dataset[i-1][j]+dataset[i-1][j+1]
+                    dataset[i].push(dp);
+                }
+                dataset[i].push(1);
+            }
+
+            var cell_data = [];
+            for(var i = 0; i < numRows; i++) {
+                for(var j = 0; j <= i; j++) {
+                    cell_data.push(
+                        {
+                            row: i+1,
+                            col: j+1,
+                            val: dataset[i][j]
+                        }
+                    );
+                }
+            }
+            //Create SVG element
+            var svg = d3.select("body")
+                        .append("svg")
+                        .attr("width", w)
+                        .attr("height", h);
+            var cells = svg.selectAll("rect")
+                .data(cell_data)
+                .enter()
+                .append("rect");
+            cells.attr("x", function(d) {
+                    return w/2-(d.row*cellSize)/2+(d.col-1)*cellSize;
+                })
+                .attr("x", function(d) {
+                    return (d.row-1)*cellSize;
+                })
         </script>
     </body>
 </html>
