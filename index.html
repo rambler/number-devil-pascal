@@ -5,6 +5,7 @@
         <meta charset="utf-8">
         <title>D3: ND first steps</title>
         <script type="text/javascript" src="d3/d3.js"></script>
+        <script type="text/javascript" src="bignumber.min.js"></script>
         <style type="text/css">
             /* No style rules here yet */       
         </style>
@@ -27,21 +28,22 @@ how many rows: ___ show divisible by: ___
 -->
         <script type="text/javascript">
             //Width and height
-            var w = 500;
-            var h = 500;
+            var w = 720;
+            var h = 720;
 
-            var numRows = 20;
+            var numRows = 64*2;
             var cellSize = h/numRows;
             
-            var dataset = [[1], [1,1]];
+            var one = new BigNumber(1);
+            var dataset = [[one], [one,one]];
             for(var i = 2; i < numRows; i++) {
                 dataset.push([]);
-                dataset[i].push(1);
+                dataset[i].push(one);
                 for(var j = 0; j < (i-1); j++) {
-                    var dp = dataset[i-1][j]+dataset[i-1][j+1]
+                    var dp = dataset[i-1][j].plus(dataset[i-1][j+1]);
                     dataset[i].push(dp);
                 }
-                dataset[i].push(1);
+                dataset[i].push(one);
             }
 
             var cell_data = [];
@@ -64,13 +66,24 @@ how many rows: ___ show divisible by: ___
             var cells = svg.selectAll("rect")
                 .data(cell_data)
                 .enter()
-                .append("rect");
-            cells.attr("x", function(d) {
+                .append("rect")
+                .attr("x", function(d) {
                     return w/2-(d.row*cellSize)/2+(d.col-1)*cellSize;
                 })
-                .attr("x", function(d) {
+                .attr("y", function(d) {
                     return (d.row-1)*cellSize;
                 })
+                .attr("width", cellSize)
+                .attr("height", cellSize)
+                .attr("fill", function(d) {
+                    if(d.val.mod(32)  == 0) {
+                        return "yellow";
+                    } else {
+                        return "red";
+                    }
+                })
+                .attr("stroke", "navy")
+                .attr("stroke-width", 1);
         </script>
     </body>
 </html>
