@@ -3,7 +3,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>D3: ND first steps</title>
+        <title>D3: Number Devil Pascal's Triangle</title>
         <script type="text/javascript" src="d3/d3.js"></script>
         <script type="text/javascript" src="bignumber.min.js"></script>
         <style type="text/css">
@@ -11,6 +11,17 @@
         </style>
     </head>
     <body>
+    <label for="mod_y"
+           style="display: inline-block; width: 240px; text-align: right">
+        yellow = mod(<span id="modY-value">32</span>)
+    </label>
+    <input type="range" min="2" max="128" id="modY">
+
+    <label for="mod_b"
+           style="display: inline-block; width: 240px; text-align: right">
+        blue = mod(<span id="modB-value">2</span>)
+    </label>
+    <input type="range" min="2" max="128" id="modB">
 <!--
    1
   1 1
@@ -75,15 +86,34 @@ how many rows: ___ show divisible by: ___
                 })
                 .attr("width", cellSize)
                 .attr("height", cellSize)
-                .attr("fill", function(d) {
-                    if(d.val.mod(32)  == 0) {
-                        return "yellow";
-                    } else {
-                        return "red";
-                    }
-                })
                 .attr("stroke", "navy")
                 .attr("stroke-width", 1);
+            var modB = 2;
+            var modY = 32;
+            function update() {
+                d3.select("#modB-value").text(modB);
+                d3.select("#modY-value").text(modY);
+                d3.select("#modB").property("value", modB);
+                d3.select("#modY").property("value", modY);
+                d3.selectAll("rect").attr("fill", function(d) {
+                    if(d.val.mod(modY)  == 0) {
+                        return "yellow";
+                    }
+                    if(d.val.mod(modB) == 0) {
+                        return "blue";
+                    }
+                    return "red";
+                });
+            }
+            update();
+            d3.select("#modB").on("input", function() {
+                modB = +this.value;
+                update();
+            });
+            d3.select("#modY").on("input", function() {
+                modY = +this.value;
+                update();
+            })
         </script>
     </body>
 </html>
